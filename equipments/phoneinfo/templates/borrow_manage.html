@@ -1,0 +1,104 @@
+<html lang="zh-CN">
+<head>
+    {% load bootstrap4 %}
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
+    <title>手机设备管理平台</title>
+</head>
+<body role = 'document'>
+
+<!--搜索栏-->
+<div class="page-header" style="position:absolute;left:30px;top:28px;">
+    <form class="navbar-form" method="get" action="/borrowsearch/">
+        {% csrf_token %}
+        <input type="search" name="borrow_person" placeholder="借出人" >
+        <button type="submit">搜索</button>
+    </form>
+</div>
+<!--记录列表-->
+<div class="row" style="left:40px;padding-top:100px;">
+    <div class="col-md-11">
+        <!--加垂直和水平滚动条-->
+        <div style="width:98%;height:900px;overflow-y:scroll;overflow-x:scroll;">
+
+        <table class="table table-striped" >
+            <thead>
+                <tr>
+                    <th>手机ID</th><th>借出手机</th><th>借出人</th><th>借出人部门</th><th>借出时间</th><th>备注</th><th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for borrowrecord in borrowrecords %}
+            <tr>
+                <td>{{ borrowrecord.borrow_mobile_id }}</td>
+                <td>{{ borrowrecord.borrow_mobile }}</td>
+                <td>{{ borrowrecord.borrow_person }}</td>
+                <td>{{ borrowrecord.borrow_department }}</td>
+                <td>{{ borrowrecord.borrow_time }}</td>
+                <td>{{ borrowrecord.borrow_remark }}</td>
+                <td>
+                    <a style="color:light blue" class="related-widget-wrapper-link add-related" id="back_id_Phoneinfo"  href="javascript:void(0)" onclick="backPhone({{ borrowrecord.borrow_mobile_id }},'{{ borrowrecord.borrow_mobile}}')">
+                    <img src="/static/admin/img/icon-changelink.svg">归还</a>
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<span style="position:absolute;right:150px;top:75px;">
+    <div style="position:absolute;right:100px;width:100px;">
+        <tr><th>共</th><td>{{ records_count }}</td><th>条记录</th></tr>
+    </div>
+</span>
+
+<script src="http://apps.bdimg.com/libs/jquery/1.11.1/jquery.min.js"></script>
+<script>
+
+function getCookie(name) {
+var cookieValue = null;
+if (document.cookie && document.cookie != '') {
+var cookies = document.cookie.split(';');
+for (var i = 0; i < cookies.length; i++) {
+var cookie = jQuery.trim(cookies[i]);
+// Does this cookie string begin with the name we want?
+if (cookie.substring(0, name.length + 1) == (name + '=')) {
+cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+break;
+}
+}
+}
+return cookieValue;
+}
+
+function csrfSafeMethod(method) {
+// these HTTP methods do not require CSRF protection
+return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+}
+
+function backPhone(phoneId,phoneName){
+
+    if (!confirm("确认要归还："+phoneName+" 吗?")){
+        return
+        }
+    $.ajax({
+          url: '/back/phoneinfo/',
+          type: 'POST',
+          data: {'id': phoneId},
+          beforeSend: function (xhr, settings) {
+          var csrftoken = getCookie('csrftoken');
+          if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+          xhr.setRequestHeader("X-CSRFToken", csrftoken);}
+          },
+          success:function (arg) {
+          alert("归还成功！")
+          window.location.reload();
+          }
+    })
+}
+
+</script>
+
+</body>
+</html>

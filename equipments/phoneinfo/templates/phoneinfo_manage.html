@@ -1,0 +1,178 @@
+<html lang="zh-CN">
+<head>
+    {% load bootstrap4 %}
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
+    <title>手机设备管理平台</title>
+</head>
+<body role = 'document'>
+
+<!--搜索栏-->
+<div class="page-header" style="padding-top:28px;">
+    <form class="navbar-form" method="get" action="/phonesearch/" >
+        {% csrf_token %}
+        <table cellspacing="4" cellpadding="4" border="0">
+           <tr>
+               <td>手机名称：</td>
+               <td><input type="text" name="mobile_name" placeholder="手机名称"></td>
+               <td>系统类型：</td>
+               <td>
+                <select name="phone_type">
+                 <option value="-1" selected>--全部--</option>
+                 <option value="0">IOS</option>
+                 <option value="1">Android</option>
+                </select>
+               </td>
+           </tr>
+            <tr>
+            <td>借出状态：</td>
+            <td>
+             <select name="status">
+                 <option value="-1" selected>--全部--</option>
+                 <option value="0">未借出</option>
+                 <option value="1">已借出</option>
+             </select>
+            </td>
+                <td>系统型号：</td>
+            <td><input type="text" name="system_name" placeholder="系统型号"></td>
+           </tr>
+            <tr>
+                <td>是否为全面屏：</td>
+                <td><input type="radio"name='is_comprehensive_screen'value='1'/>是</td>
+                <td>是否支持指纹验证：</td>
+                <td><input type="radio"name='is_finger_print'value='1'/>是</td>
+            </tr>
+            <tr>
+                <td></td>
+            </tr>
+           <tr>
+            <td colspan="2" >
+                <input type="submit" value=" 查 询 ">
+            </td>
+               <td colspan="2" >
+                <input type="reset" value=" 重 置 "/>
+            </td>
+           </tr>
+          </table>
+    </form>
+</div>
+
+<!-- 增加产品 -->
+<div style="float:left;padding-top:10px;">
+    <a class="related-widget-wrapper-link change-related" id="add_id_Phoneinfo" href="../add/phoneinfo" title="添加手机信息">
+        <img src="/static/admin/img/icon-addlink.svg" alt="增加" />增加
+    </a>
+</div>
+
+
+<!--手机列表-->
+<div class="row" style="padding-top:40px;float:left">
+    <div class="col-md-11">
+       <!--加垂直和水平滚动条-->
+        <div style="width:98%;height:900px;overflow-y:scroll;overflow-x:scroll;">
+        <table class="table table-striped" style="table-layout:fixed;">
+            <thead>
+                <tr>
+                    <th>手机名称</th><th>系统类型</th><th>手机分辨率</th><th>系统型号</th><th>是否为全面屏</th><th>是否为支持指纹</th><th>借出状态</th><th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for phoneinfo in searchphones %}
+            <tr>
+                <td na="mobile_name">{{ phoneinfo.mobile_name }}</td>
+                <td na="phone_type">{% if phoneinfo.phone_type == 0 %}
+                    {{ phoneinfo.ios_or_andriod.0.1}}
+                    {% else %}
+                    {{ phoneinfo.ios_or_andriod.1.1}}
+                    {% endif %}
+                </td>
+                <td na="resolution_rate">{{ phoneinfo.resolution_rate }}</td>
+                <td na="system_name">{{ phoneinfo.system_name }}</td>
+                <td na="is_comprehensive_screen">{% if phoneinfo.is_comprehensive_screen == 0 %}
+                    {{ phoneinfo.comprehensive_screen.0.1 }}
+                    {% else %}
+                    {{ phoneinfo.comprehensive_screen.1.1 }}
+                    {% endif %}
+                </td>
+                <td na="is_finger_print">{% if phoneinfo.is_finger_print == 0 %}
+                    {{ phoneinfo.finger_print.0.1 }}
+                    {% else %}
+                    {{ phoneinfo.finger_print.1.1 }}
+                    {% endif %}
+                </td>
+                <td na="status">{% if phoneinfo.status == 0 %}
+                    <a style="color:green">{{ phoneinfo.borrow_status.0.1}}
+                        {% else %}</a>
+                    <a style="color:red">{{ phoneinfo.borrow_status.1.1}}
+                        {% endif %}</a>
+                </td>
+                <td>
+                    <a style="color:light blue" class="related-widget-wrapper-link add-related" id="show_id_Phoneinfo" href="../show/phoneinfo/{{ phoneinfo.id }}">
+                    <img src="/static/admin/img/icon-changelink.svg">修改</a>
+                    <a style="color:light blue" class="related-widget-wrapper-link add-related" id="delete_id_Phoneinfo"  href="javascript:void(0)" onclick="delPhone({{ phoneinfo.id }},'{{ phoneinfo.mobile_name}}')">
+                    <img src="/static/admin/img/icon-deletelink.svg">删除</a>
+                    {% if phoneinfo.status == 0 %}
+                    <a style="color:light blue" class="related-widget-wrapper-link add-related" id="borrow_id_Phoneinfo" href="../show/borrowphone/{{ phoneinfo.id }}">
+                    <img src="/static/admin/img/icon-changelink.svg">借出</a>
+                        {% endif %}</a>
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<span style="position:absolute;right:150px;top:230px;">
+    <div style="position:absolute;right:100px;width:100px;">
+        <tr><th>共</th><td>{{ records_count }}</td><th>条记录</th></tr>
+    </div>
+</span>
+
+<script src="http://apps.bdimg.com/libs/jquery/1.11.1/jquery.min.js"></script>
+<script>
+function getCookie(name) {
+var cookieValue = null;
+if (document.cookie && document.cookie != '') {
+var cookies = document.cookie.split(';');
+for (var i = 0; i < cookies.length; i++) {
+var cookie = jQuery.trim(cookies[i]);
+// Does this cookie string begin with the name we want?
+if (cookie.substring(0, name.length + 1) == (name + '=')) {
+cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+break;
+}
+}
+}
+return cookieValue;}
+
+function csrfSafeMethod(method) {
+// these HTTP methods do not require CSRF protection
+return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));}
+
+function delPhone(phoneId,phoneName){
+
+    if (!confirm("确认要删除："+phoneName+" 吗?")){
+        return
+    }
+           $.ajax({
+                url: '/delete/phoneinfo/',
+                type: 'POST',
+                data: {'id': phoneId},
+                beforeSend: function (xhr, settings) {
+                 var csrftoken = getCookie('csrftoken');
+                 if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                     xhr.setRequestHeader("X-CSRFToken", csrftoken);}
+                     },
+                success:function (arg) {
+                   alert("删除成功！")
+                   window.location.reload();
+                }
+            })
+    }
+
+
+</script>
+
+</body>
+</html>

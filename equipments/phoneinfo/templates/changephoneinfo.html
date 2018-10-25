@@ -1,0 +1,98 @@
+<html lang="zh-CN">
+<head>
+    {% load bootstrap4 %}
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
+    <title>手机设备管理平台</title>
+    <link href="../static/css/bootstrap.min.css" rel="stylesheet">
+    <style>body{text-align:center}</style>
+</head>
+<body role="document">
+
+<div style="padding-top:30px;float:left;text-alignleft;padding-left:40px;">
+    <h4>手机信息修改</h4>
+</div>
+
+<div class="page-header" style="padding-top:80px;padding-left:35px;">
+    <form class="navbar-form" method="post" action="/change/phoneinfo/{{id}}/">
+        {% csrf_token %}
+        <table cellspacing="5" cellpadding="5" border="0">
+           <tr>
+            <td>手机名称：</td>
+            <td>{{ mobile_name }}</td>
+           </tr>
+            <tr>
+            <td>系统类型：</td>
+            <td>
+                <select name="phone_type" class="form-control">
+                    {% if phone_type == 0 %}
+                    <option value="0" selected>IOS</option>
+                    <option value="1" >Android</option>
+                    {% else %}
+                    <option value="0" >IOS</option>
+                    <option value="1" selected>Android</option>
+                    {% endif %}
+                </select></td>
+           </tr>
+            <tr>
+                <td>屏幕分辨率：</td>
+                <td><input type="text" class="form-control" name="resolution_rate" placeholder="{{ resolution_rate }}"/></td>
+           </tr>
+           <tr>
+               <td>系统型号：</td>
+               <td><input type="text" class="form-control" name="system_name" placeholder="{{ system_name }}"/></td>
+           </tr>
+            <tr>
+                <td>是否为全面屏：</td>
+                <td>
+                    <select name="is_comprehensive_screen" class="form-control">
+                    {% if is_comprehensive_screen == 0 %}
+                    <option value="1" >是</option>
+                    <option value="0" selected>否</option>
+                    {% else %}
+                    <option value="1" selected>是</option>
+                    <option value="0" >否</option>
+                    {% endif %}
+                </select>
+                </td>
+            </tr>
+            <tr>
+                <td>指纹验证：</td>
+                <td>
+                    <select name="is_finger_print" class="form-control">
+                    {% if is_finger_print == 0 %}
+                    <option value="1" >是</option>
+                    <option value="0" selected>否</option>
+                    {% else %}
+                    <option value="1" selected>是</option>
+                    <option value="0" >否</option>
+                    {% endif %}
+                </select>
+                </td>
+            </tr>
+            <tr>
+                <td>图片上传路径：</td>
+               <td><input type="text" class="form-control" name="pic_url" placeholder="{{ pic_url }}"/></td>
+            </tr>
+            <tr>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+           </tr>
+           <tr>
+            <td>
+                <input type="submit" value="保存" onclick="success">
+            </td>
+            <td>
+                <a href="../../../phoneinfo_manage" target="mainFrame"><input type="button" value="返回"></a>
+            </td>
+           </tr>
+          </table>
+    </form>
+</div>
+
+<div class="row" style="padding-top:23px;">
+
+</div>
+
+</body>
+</html>
