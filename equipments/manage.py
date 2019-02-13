@@ -9,7 +9,6 @@ logging.debug('debug message')
 logging.info('info message')
 logging.warning('warning message')
 
-
 if __name__ == "__main__":
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "equipments.settings")
     try:
