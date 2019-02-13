@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 import os
 import sys
-reload(sys)
-sys.setdefaultencoding('utf8')
+
+# //sys.setdefaultencoding('utf8')
 
 import logging
 logging.debug('debug message')

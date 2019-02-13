@@ -10,7 +10,10 @@ from django.views.decorators.csrf import csrf_exempt
 from django.core.paginator import Paginator,EmptyPage,PageNotAnInteger
 from django.utils import timezone
 from django.contrib.auth.models import User
-
+from django.db.models import Q
+import sys
+reload(sys)
+sys.setdefaultencoding('utf8')
 
 # Create your views here.
 def login(request):
@@ -49,12 +52,14 @@ def phoneinfo_manage(request):
     phone_list = Phoneinfo.objects.exclude(yn=1)
     records_count = Phoneinfo.objects.exclude(yn=1).count()
     print (records_count)
-    return render(request,'phoneinfo_manage.html',{'user':username,"searchphones":phone_list,"records_count":records_count})
+    borrow_list = Borrow_record_info.objects.exclude(borrow_status=0)
+
+    return render(request,'phoneinfo_manage.html',{'user':username,"searchphones":phone_list,"records_count":records_count,"borrowrecords":borrow_list})
 
 def addphoneinfo(request):
     return render(request,'addphoneinfo.html')
 
-#操作成功提示
+# 操作成功提示
 def successinfo(request):
     return render(request,'successinfo.html')
 
@@ -164,7 +169,7 @@ def db_borrowphoneinfo(request,id):
         else:
             return render(request, 'addborrowrecord.html', {'error': '借出人员不为空！'})
 
-#管理页面搜索功能
+# 管理页面搜索功能
 @login_required
 def phonesearch(request):
     username = request.session.get('user','')
@@ -174,6 +179,7 @@ def phonesearch(request):
     system_name = request.GET.get('system_name', '')
     is_comprehensive_screen = request.GET.get('is_comprehensive_screen', '')
     is_finger_print = request.GET.get('is_finger_print', '')
+    borrow_person = request.GET.get('borrow_person', '')
 
     search_list = dict()
     search_list['yn'] = 0
@@ -193,7 +199,9 @@ def phonesearch(request):
     phone_list = Phoneinfo.objects.filter(**search_list)
     records_count = Phoneinfo.objects.filter(**search_list).count()
 
-    return render(request,'phoneinfo_manage.html',{'user':username,'searchphones':phone_list,'records_count':records_count})
+    borrow_list = Borrow_record_info.objects.exclude(borrow_status=0)
+
+    return render(request,'phoneinfo_manage.html',{'user':username,'searchphones':phone_list,'records_count':records_count,'borrowrecords':borrow_list})
 
 
 def addborrowrecord(request):
